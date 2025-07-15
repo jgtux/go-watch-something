@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"net/url"
 	"os"
+	"flag"
 	"syscall"
 	"os/signal"
 	"os/exec"
@@ -18,10 +19,23 @@ import (
 )
 
 func main() {	
-	if len(os.Args) < 2 {
-		log.Fatal("Usage: go run main.go <magnet_link>")
+	serveBufAtFlag := flag.Float64("serve_at", 0.2, "Float of range [0,1].")
+	portFlag := flag.Uint("port", 8080, "Int of range [0, 65535].")
+
+	var magnet string
+	flag.StringVar(&magnet, "magnet", "", "String of magnet link.")
+
+	flag.Parse()
+
+	if check := *serveBufAtFlag; check < 0 || check > 1 {
+		log.Fatal("Flag serve_at must be in range of [0,1].")
+	} else if check := *portFlag; check > 65535 {
+		log.Fatal("Flag port must be in range of [0, 65535].")
 	}
-	magnet := os.Args[1]
+
+	if magnet == "" {
+		log.Fatal("Magnet link is missing.")
+	}
 
 	if !isValidMagnetLink(magnet) {
 		log.Fatal("Invalid magnet.")
@@ -102,7 +116,7 @@ func main() {
 
 	t.DownloadAll() // prevent locking
 	largestFile.Download()
-	
+
 	bufferSize := int64(float64(largestFile.Length()) * 0.02) // x bytes * 0.02 - buffer based in file length
 
 	// Pre-buffering goroutine
