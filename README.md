@@ -28,7 +28,7 @@ Stream movies directly from torrents and watch them, built with Go.
 Clone the repository and build:
 
 ```bash
-git clone https://github.com/yourusername/go-watch-something.git
+git clone https://github.com/jgtux/go-watch-something.git
 cd go-watch-something
 make install
 ```
