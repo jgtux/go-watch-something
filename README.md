@@ -17,7 +17,7 @@ Stream movies directly from torrents and watch them, built with Go.
 
 ## Requirements
 
-- Go 1.18 or higher
+- Go 1.21.5 or higher
 - Internet connection to fetch torrent data
 - subliminal (Optional)
 
