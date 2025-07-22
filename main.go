@@ -1,7 +1,7 @@
 package main
 
 import (
-	// "bytes"
+	"bytes"
 	"flag"
 	"fmt"
 	"io"
@@ -90,20 +90,13 @@ func main() {
 	fmt.Printf("Selected file: %s (%.2f MB)", largestFile.Path(), float64(largestFile.Length())/1024/1024)
 
 	if useSubliminal {
-		go func() {
-			subLangList := strings.Split(subLangs, ",")
-			subPath := filepath.Join(tmpDir, largestFile.Path())
-			err := getSubsFromSubliminal(subPath, subLangList)
-			if err != nil {
-				log.Printf("Subtitle download failed: %v", err)
-			}
-			// else {
-			// 	err := renameAllSubtitlesToSequential(filepath.Dir(subPath))
-			// 	if err != nil {
-			// 		log.Printf("Subtitle rename failed: %v", err)
-			// 	}
-			// }
-		}()
+		subLangList := strings.Split(subLangs, ",")
+		subPath := filepath.Join(tmpDir, largestFile.Path())
+		err := getSubsFromSubliminal(subPath, subLangList)
+		if err != nil {
+			log.Printf("\n%v\nContinuing without subtitles.", err)
+			useSubliminal = false
+		}
 	}
 
 	t.DownloadAll()
@@ -169,7 +162,6 @@ func main() {
 	}
 
 	go func() {
-		fmt.Printf("Starting stream server on http://localhost:%d", *portFlag)
 		if err := http.ListenAndServe(fmt.Sprintf(":%d", *portFlag), nil); err != nil {
 			log.Fatal(err)
 		}
@@ -248,8 +240,6 @@ func cleanTmpDir(dir string) {
 func getSubsFromSubliminal(file string, langs []string) error {
 	fmt.Println("\nFetching subtitles from subliminal...")
 
-	fmt.Println(langs)
-	fmt.Println(file)
 	args := []string{"download"}
 	for _, lang := range langs {
 		args = append(args, "-l", lang)
@@ -257,42 +247,15 @@ func getSubsFromSubliminal(file string, langs []string) error {
 	
 	args = append(args, file)
 
-	log.Printf("Running subliminal with args: %#v\n", args)
-
 	cmd := exec.Command("subliminal", args...)
 	cmd.Stdout = io.Discard 
-	cmd.Stderr = io.Discard
+	var stderr bytes.Buffer
+	cmd.Stderr = &stderr
 
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("Subtitles download failed: %w", err)
+		return fmt.Errorf("Subtitles download failed: %v\nStderr: %s", err, stderr.String())
 	}
+
+	fmt.Println("Subtitles downloaded succesfully.")
 	return nil 
 }
-
-
-
-// func renameAllSubtitlesToSequential(fpath string) error {
-// 	files, err := os.ReadDir(fpath)
-// 	if err != nil {
-// 		return fmt.Errorf("failed to read dir: %w", err)
-// 	}
-
-// 	counter := 1
-// 	for _, f := range files {
-// 		if !f.IsDir() && strings.HasSuffix(strings.ToLower(f.Name()), ".srt") {
-// 			oldPath := filepath.Join(fpath, f.Name())
-// 			newName := fmt.Sprintf("sub%d.srt", counter)
-// 			newPath := filepath.Join(fpath, newName)
-
-// 			err := os.Rename(oldPath, newPath)
-// 			if err != nil {
-// 				return fmt.Errorf("failed to rename %s to %s: %w", f.Name(), newName, err)
-// 			}
-
-// 			log.Printf("Renamed subtitle: %s → %s", f.Name(), newName)
-// 			counter++
-// 		}
-// 	}
-
-// 	return nil
-// }
