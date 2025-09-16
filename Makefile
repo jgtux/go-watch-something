@@ -6,7 +6,7 @@ BINDIR = $(PREFIX)/bin
 .PHONY: build install clean
 
 build:
-	go build -o $(BINARY) $(SRC)
+	go build -o go-watch-something ./cmd/go-watch-something
 
 install: build
 	install -Dm755 $(BINARY) $(BINDIR)/$(BINARY)
