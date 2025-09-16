@@ -1,4 +1,4 @@
-# Go-watch-Something (WIP)
+# Go-watch-Something 
 
 Stream movies directly from torrents and watch them, built with Go.
 
