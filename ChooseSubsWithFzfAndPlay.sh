@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env sh
 
 # URL base do servidor
 BASE_URL="http://localhost:8080"

@@ -9,9 +9,9 @@ import (
     "syscall"
     "path/filepath"
 
-    "github.com/jgtux/go-watch-something/internal/streamer"
-    "github.com/jgtux/go-watch-something/internal/subtitles"
-    "github.com/jgtux/go-watch-something/internal/utils"
+    "go-watch-something/internal/streamer"
+    "go-watch-something/internal/subtitles"
+    "go-watch-something/internal/utils"
 )
 
 func main() {

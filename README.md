@@ -1,6 +1,6 @@
-# Go-watch-Something 
+# go-watch-Something 
 
-Stream movies directly from torrents and watch them, built with Go.
+Stream movies directly from torrents and watch them, built with Go. Work in progress.
 
 ---
 
@@ -28,13 +28,15 @@ Stream movies directly from torrents and watch them, built with Go.
 Clone the repository and build:
 
 ```bash
-git clone https://github.com/jgtux/go-watch-something.git
-cd go-watch-something
-make install
+$ git clone https://github.com/jgtux/go-watch-something.git
+$ cd go-watch-something
+$ make install
 ```
 
 ## Usage
 
 ```bash
-go-watch-something -h
+$ go-watch-something -h
+$ # Example
+$ go-watch-something -magnet="<magnet>" -use_subliminal
 ```

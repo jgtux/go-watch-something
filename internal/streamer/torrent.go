@@ -14,7 +14,7 @@ import (
 
 
     "github.com/anacrolix/torrent"
-    "github.com/jgtux/go-watch-something/internal/utils"
+    "go-watch-something/internal/utils"
 )
 
 // SetupTorrentClient creates client, tmpDir, adds magnet link, waits metadata
