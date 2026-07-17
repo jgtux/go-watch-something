@@ -2,9 +2,9 @@ package utils
 
 import (
 	"net/url"
+	"path/filepath"
 	"regexp"
 	"strings"
-	"path/filepath"
 )
 
 func IsValidMagnetLink(magnet string) bool {

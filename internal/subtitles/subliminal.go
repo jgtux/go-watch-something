@@ -8,19 +8,29 @@ import (
 	"path/filepath"
 )
 
-func Fetch(file string, langs []string) error {
-	fmt.Println("Fetching subtitles...")
+// Subliminal fetches subtitles via the external `subliminal` CLI
+// (https://github.com/Diaoul/subliminal). Requires it to be installed
+// separately -- see README.
+type Subliminal struct{}
 
-	absPath, err := filepath.Abs(file)
+func (Subliminal) Name() string { return "subliminal" }
+
+func (Subliminal) Fetch(videoDir string, langs []string) error {
+	if _, err := exec.LookPath("subliminal"); err != nil {
+		return fmt.Errorf("%w: subliminal binary not found on PATH", ErrNotConfigured)
+	}
+
+	fmt.Println("Fetching subtitles via subliminal...")
+
+	absPath, err := filepath.Abs(videoDir)
 	if err != nil {
-		return fmt.Errorf("Failed to get absolute path: %v", err)
+		return fmt.Errorf("failed to get absolute path: %w", err)
 	}
 
 	args := []string{"download"}
 	for _, lang := range langs {
 		args = append(args, "-l", lang)
 	}
-	// Pass the absolute path as a single argument
 	args = append(args, absPath)
 
 	cmd := exec.Command("subliminal", args...)
@@ -29,9 +39,9 @@ func Fetch(file string, langs []string) error {
 	cmd.Stderr = &stderr
 
 	if err := cmd.Run(); err != nil {
-		return fmt.Errorf("Subtitles download failed: %v\nStderr: %s", err, stderr.String())
+		return fmt.Errorf("subliminal download failed: %w\nstderr: %s", err, stderr.String())
 	}
 
-	fmt.Println("Subtitles downloaded successfully.")
+	fmt.Println("Subtitles downloaded successfully via subliminal.")
 	return nil
 }
